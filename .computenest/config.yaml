@@ -29,11 +29,12 @@ Artifact:
     ArtifactProperty:
       RepoName: ${AcrImageBuilder.AcrImage_1.RepoName}
       Tag: ${AcrImageBuilder.AcrImage_1.Tag}
+      RepoType: Private
 AcrImageBuilder:
   AcrImage_1:
     # dockerfile路径
     DockerFilePath: docker/images/n8n-custom/Dockerfile
     # 采用与image_name相同的repoName
     RepoName: lyh-rain_n8n-dockerfile
-    Tag: 1.0.0
+    Tag: latest
     DockerBuildArgs: {}

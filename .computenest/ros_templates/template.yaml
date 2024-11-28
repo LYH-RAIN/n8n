@@ -1,7 +1,4 @@
 ROSTemplateFormatVersion: '2015-09-01'
-Description:
-  en: Docker Service Ros Template
-  zh-cn: Docker-ECS单机版服务模板
 Conditions:
   CreateVpcConditions:
     Fn::Equals:
@@ -154,6 +151,11 @@ Parameters:
       en: Zone ID
       zh-cn: 可用区ID
     AssociationProperty: ALIYUN::ECS::Instance::ZoneId
+    AssociationPropertyMetadata:
+      DefaultValueStrategy: random
+      InstanceChargeType: ${PayType}
+      SystemDiskCategory: cloud_essd
+      InstanceType: ${EcsInstanceType}
   VpcId:
     Type: String
     Label:
@@ -166,6 +168,7 @@ Parameters:
         - ${VpcOption}
     Default: ''
     AssociationPropertyMetadata:
+      AutoSelectFirst: true
       Visible:
         Condition:
           Fn::Equals:
@@ -183,18 +186,16 @@ Parameters:
         - ExistingVPC
         - ${VpcOption}
     AssociationPropertyMetadata:
-      VpcId: VpcId
-      ZoneId: ZoneId
+      AutoSelectFirst: true
+      VpcId: ${VpcId}
+      ZoneId: ${ZoneId}
       Visible:
         Condition:
           Fn::Equals:
             - ExistingVPC
             - ${VpcOption}
-  Password:
-    Type: String
-    AssociationProperty: ALIYUN::ECS::Instance::Password
-    Label: 密码
-    NoEcho: True
+
+
 Resources:
   # 新建vpc
   EcsVpc:
@@ -289,7 +290,7 @@ Resources:
         host=$(echo $host | tr -d '"')
         docker login $host --username=$username --password=$password
         docker pull '{{ computenest::acrimage::LYH-RAIN_n8n-dockerfile }}'
-        docker run -d -p 8080:8080 -e Password=${Password} '{{ computenest::acrimage::LYH-RAIN_n8n-dockerfile }}'
+        docker run -d -p 8080:8080 '{{ computenest::acrimage::LYH-RAIN_n8n-dockerfile }}'
 
 Outputs:
   
@@ -330,9 +331,4 @@ Metadata:
           - VSwitchCidrBlock
         Label:
           default: 可用区配置
-      - Parameters:
-        - Password
-        Label:
-          en: Software Configuration
-          zh-cn: 软件配置
       
